@@ -64,7 +64,7 @@ public abstract class TestCase {
         return stopwatch;
     }
 
-    interface Test {
+    public interface Test {
         void run() throws Exception;
     }
 }

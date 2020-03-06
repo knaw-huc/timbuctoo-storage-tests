@@ -1,6 +1,6 @@
-package nl.knaw.huc.timbuctoo;
+package nl.knaw.huc.timbuctoo.bdb;
 
-import nl.knaw.huc.timbuctoo.bdb.BdbRdfHandler;
+import nl.knaw.huc.timbuctoo.TestCase;
 
 import java.io.File;
 import java.net.URL;

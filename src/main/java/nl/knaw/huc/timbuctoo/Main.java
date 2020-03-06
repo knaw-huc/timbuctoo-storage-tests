@@ -1,5 +1,8 @@
 package nl.knaw.huc.timbuctoo;
 
+import nl.knaw.huc.timbuctoo.bdb.BdbTestCase;
+import nl.knaw.huc.timbuctoo.postgresql.PostgresTestCase;
+
 public class Main {
     private static final String USER_ID = "12345";
     private static final int VERSION = 0;
@@ -10,6 +13,9 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         BdbTestCase bdbTestCase = new BdbTestCase(ECARTICO_URL, USER_ID, ECARTICO_NAME, ECARTICO_BASE_URI, VERSION);
+        PostgresTestCase postgresTestCase = new PostgresTestCase(ECARTICO_URL, USER_ID, ECARTICO_NAME, ECARTICO_BASE_URI, VERSION);
+
         bdbTestCase.printReport();
+        postgresTestCase.printReport();
     }
 }
