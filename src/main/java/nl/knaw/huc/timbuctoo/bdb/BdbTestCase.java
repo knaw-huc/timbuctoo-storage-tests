@@ -29,7 +29,7 @@ public class BdbTestCase extends TestCase {
     }
 
     private void runTests() throws Exception {
-        super.runTests(NAME, this::importAll, this::getAll, this::getSubjectsOfVersion,
+        super.runTests(NAME, this::importAll, this::getLatest, this::getSubjectsOfVersion,
                 this::getAddedChangesOfVersion, this::getDeletedChangesOfVersion);
     }
 
@@ -38,7 +38,7 @@ public class BdbTestCase extends TestCase {
         rdfHandler.bdbDataSource.commit();
     }
 
-    private void getAll() {
+    private void getLatest() {
         rdfHandler.bdbDataSource.tripleStore.getAllQuads().count();
     }
 

@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class PostgresTestCase extends TestCase {
     private static final String NAME = "PostgreSQL";
 
-    private static final String GET_ALL = "SELECT * FROM \"%s\"";
+    private static final String GET_LATEST = "SELECT * FROM \"%s\"";
     private static final String GET_VERSION = "SELECT * FROM \"%s\" WHERE version=:version AND is_insert=:is_insert";
     private static final String GET_SUBJECTS = "SELECT DISTINCT subject FROM \"%s\" WHERE version=:version";
 
@@ -43,7 +43,7 @@ public class PostgresTestCase extends TestCase {
     }
 
     private void runTests() throws Exception {
-        super.runTests(NAME, this::importAll, this::getAll, this::getSubjectsOfVersion,
+        super.runTests(NAME, this::importAll, this::getLatest, this::getSubjectsOfVersion,
                 this::getAddedChangesOfVersion, this::getDeletedChangesOfVersion);
     }
 
@@ -52,8 +52,8 @@ public class PostgresTestCase extends TestCase {
         rdfHandler.commitAndClose();
     }
 
-    private void getAll() {
-        jdbi.withHandle(handle -> handle.createQuery(String.format(GET_ALL, tableName))
+    private void getLatest() {
+        jdbi.withHandle(handle -> handle.createQuery(String.format(GET_LATEST, tableName))
                 .map(PostgresTestCase::mapToCursorQuad)
                 .stream()).count();
     }
