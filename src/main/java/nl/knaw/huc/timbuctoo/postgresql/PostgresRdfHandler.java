@@ -11,6 +11,7 @@ public class PostgresRdfHandler extends RDFHandler {
     private static final String CREATE_TABLE = "CREATE TABLE \"%s\" (\n" +
             "        subject VARCHAR(2048) NOT NULL,\n" +
             "        predicate VARCHAR(2048) NOT NULL,\n" +
+            "        graph VARCHAR(2048) NOT NULL,\n" +
             "        language VARCHAR(3),\n" +
             "        type VARCHAR(2048),\n" +
             "        is_out BOOLEAN NOT NULL,\n" +
@@ -20,18 +21,19 @@ public class PostgresRdfHandler extends RDFHandler {
             ")\n";
 
     private static final String PUT =
-            "INSERT INTO \"%s\" VALUES (:subject, :predicate, :language, :type, :is_out, :version, :is_insert, :object)";
+            "INSERT INTO \"%s\" VALUES (:subject, :predicate, :graph, :language, :type, :is_out, :version, :is_insert, :object)";
 
-    private final int currentversion;
+    private final int version;
     private final String tableName;
     private final Handle handle;
     private final PreparedBatch batch;
 
     private int count = 0;
 
-    public PostgresRdfHandler(String userId, String dataSetId, String defaultGraph, Jdbi jdbi, int currentversion) {
-        super(defaultGraph);
-        this.currentversion = currentversion;
+    public PostgresRdfHandler(String userId, String dataSetId, String baseUri, String defaultGraph, String fileName,
+                              Jdbi jdbi, int version) {
+        super(baseUri, defaultGraph, fileName);
+        this.version = version;
 
         tableName = DigestUtils.md5Hex(String.format("%s_%s", userId, dataSetId));
 
@@ -52,23 +54,24 @@ public class PostgresRdfHandler extends RDFHandler {
     }
 
     protected void putQuad(String subject, String predicate, Direction direction, String object, String valueType,
-                           String language) {
-        insertQuad(subject, predicate, direction, object, valueType, language, true);
+                           String language, String graph) {
+        insertQuad(subject, predicate, direction, object, valueType, language, graph, true);
     }
 
     protected void deleteQuad(String subject, String predicate, Direction direction, String object, String valueType,
-                              String language) {
-        insertQuad(subject, predicate, direction, object, valueType, language, false);
+                              String language, String graph) {
+        insertQuad(subject, predicate, direction, object, valueType, language, graph, false);
     }
 
     private void insertQuad(String subject, String predicate, Direction direction, String object, String valueType,
-                            String language, boolean isInsert) {
+                            String language, String graph, boolean isInsert) {
         batch.bind("subject", subject)
                 .bind("predicate", predicate)
+                .bind("graph", graph)
                 .bind("language", language)
                 .bind("type", valueType)
                 .bind("is_out", direction == Direction.OUT)
-                .bind("version", currentversion)
+                .bind("version", version)
                 .bind("is_insert", isInsert)
                 .bind("object", object)
                 .add();

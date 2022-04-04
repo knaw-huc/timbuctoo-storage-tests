@@ -1,5 +1,6 @@
 package nl.knaw.huc.timbuctoo.util;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
@@ -13,11 +14,15 @@ import static nl.knaw.huc.timbuctoo.util.RdfConstants.LANGSTRING;
 
 public abstract class RDFHandler extends AbstractRDFHandler {
     private static final int ADD = '+';
+    private final String baseUri;
     private final String defaultGraph;
+    private final String fileName;
     private Supplier<Integer> actionSupplier;
 
-    public RDFHandler(String defaultGraph) {
+    public RDFHandler(String baseUri, String defaultGraph, String fileName) {
+        this.baseUri = baseUri;
         this.defaultGraph = defaultGraph;
+        this.fileName = fileName;
     }
 
     public void registerActionSupplier(Supplier<Integer> actionSupplier) {
@@ -49,8 +54,8 @@ public abstract class RDFHandler extends AbstractRDFHandler {
     private String handleNode(Value resource) {
         if (resource instanceof BNode) {
             String nodeName = resource.toString();
-            String nodeId = nodeName.substring(nodeName.indexOf(":") + 1, nodeName.length());
-            return "BlankNode:" + defaultGraph + "/" + nodeId;
+            String nodeId = nodeName.substring(nodeName.indexOf(":") + 1);
+            return baseUri + ".well-known/genid/" + DigestUtils.md5Hex(fileName) + "_" + nodeId;
         } else {
             return resource.stringValue();
         }
@@ -82,39 +87,39 @@ public abstract class RDFHandler extends AbstractRDFHandler {
     }
 
     private void addRelation(String subject, String predicate, String object, String graph) throws Exception {
-        putQuad(subject, predicate, Direction.OUT, object, null, null);
-        putQuad(object, predicate, Direction.IN, subject, null, null);
+        putQuad(subject, predicate, Direction.OUT, object, null, null, graph);
+        putQuad(object, predicate, Direction.IN, subject, null, null, graph);
     }
 
     private void addValue(String subject, String predicate, String value, String dataType, String graph)
             throws Exception {
-        putQuad(subject, predicate, Direction.OUT, value, dataType, null);
+        putQuad(subject, predicate, Direction.OUT, value, dataType, null, graph);
     }
 
     private void addLanguageTaggedString(String subject, String predicate, String value, String language,
                                          String graph) throws Exception {
-        putQuad(subject, predicate, Direction.OUT, value, LANGSTRING, language);
+        putQuad(subject, predicate, Direction.OUT, value, LANGSTRING, language, graph);
     }
 
     private void delRelation(String subject, String predicate, String object, String graph)
             throws Exception {
-        deleteQuad(subject, predicate, Direction.OUT, object, null, null);
-        deleteQuad(object, predicate, Direction.IN, subject, null, null);
+        deleteQuad(subject, predicate, Direction.OUT, object, null, null, graph);
+        deleteQuad(object, predicate, Direction.IN, subject, null, null, graph);
     }
 
     private void delValue(String subject, String predicate, String value, String dataType, String graph)
             throws Exception {
-        deleteQuad(subject, predicate, Direction.OUT, value, dataType, null);
+        deleteQuad(subject, predicate, Direction.OUT, value, dataType, null, graph);
     }
 
     private void delLanguageTaggedString(String subject, String predicate, String value, String language,
                                          String graph) throws Exception {
-        deleteQuad(subject, predicate, Direction.OUT, value, LANGSTRING, language);
+        deleteQuad(subject, predicate, Direction.OUT, value, LANGSTRING, language, graph);
     }
 
     protected abstract void putQuad(String subject, String predicate, Direction direction, String object, String valueType,
-                                    String language) throws Exception;
+                                    String language, String graph) throws Exception;
 
     protected abstract void deleteQuad(String subject, String predicate, Direction direction, String object, String valueType,
-                                       String language) throws Exception;
+                                       String language, String graph) throws Exception;
 }

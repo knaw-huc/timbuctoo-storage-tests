@@ -34,7 +34,6 @@ public class StreamIterator {
     }
   }
 
-
   public interface ThrowingConsumer<T, U extends Exception> {
     void accept(T value) throws U;
   }

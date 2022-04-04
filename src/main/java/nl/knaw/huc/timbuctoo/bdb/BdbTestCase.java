@@ -6,20 +6,21 @@ import java.io.File;
 import java.net.URL;
 
 public class BdbTestCase extends TestCase {
-    private static final String NAME = "Berkely DB";
+    private static final String NAME = "Berkeley DB";
 
     private final String url;
     private final String baseUri;
     private final int version;
     private final BdbRdfHandler rdfHandler;
 
-    public BdbTestCase(String url, String userId, String name, String baseUri, int version) throws Exception {
+    public BdbTestCase(String url, String userId, String name, String baseUri, String defaultGraph,
+                       String fileName, int version) throws Exception {
         this.url = url;
         this.baseUri = baseUri;
         this.version = version;
 
-        String currentPath = new File(".").getCanonicalPath();
-        rdfHandler = new BdbRdfHandler(userId, name, baseUri, currentPath, version);
+        String currentPath = new File("./data/bdb").getCanonicalPath();
+        rdfHandler = new BdbRdfHandler(userId, name, baseUri, defaultGraph, fileName, currentPath, version);
 
         runTests();
     }
@@ -39,11 +40,11 @@ public class BdbTestCase extends TestCase {
     }
 
     private void getLatest() {
-        rdfHandler.bdbDataSource.tripleStore.getAllQuads().count();
+        rdfHandler.bdbDataSource.quadStore.getAllQuads().count();
     }
 
     private void getSubjectsOfVersion() {
-        rdfHandler.bdbDataSource.updatedPerPatchStore.subjectsOfVersion(version).count();
+        rdfHandler.bdbDataSource.updatedPerPatchStore.ofVersion(version).count();
     }
 
     private void getAddedChangesOfVersion() {

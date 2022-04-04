@@ -3,9 +3,9 @@ package nl.knaw.huc.timbuctoo.bdb;
 import com.sleepycat.bind.tuple.TupleBinding;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.BdbEnvironmentCreator;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.exceptions.BdbDbCreationException;
-import nl.knaw.huc.timbuctoo.bdb.berkeleydb.isclean.IsCleanHandler;
+import nl.knaw.huc.timbuctoo.bdb.berkeleydb.isclean.StringIntegerIsCleanHandler;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.isclean.StringStringIsCleanHandler;
-import nl.knaw.huc.timbuctoo.bdb.datastores.implementations.bdb.BdbTripleStore;
+import nl.knaw.huc.timbuctoo.bdb.datastores.implementations.bdb.BdbQuadStore;
 import nl.knaw.huc.timbuctoo.bdb.datastores.implementations.bdb.BdbTruePatchStore;
 import nl.knaw.huc.timbuctoo.bdb.datastores.implementations.bdb.UpdatedPerPatchStore;
 import nl.knaw.huc.timbuctoo.util.DataStoreCreationException;
@@ -15,7 +15,7 @@ public class BdbDataSource {
     private final String userId;
     private final String dataSetId;
 
-    public BdbTripleStore tripleStore;
+    public BdbQuadStore quadStore;
     public UpdatedPerPatchStore updatedPerPatchStore;
     public BdbTruePatchStore truePatchStore;
 
@@ -28,7 +28,7 @@ public class BdbDataSource {
     }
 
     public void commit() {
-        tripleStore.commit();
+        quadStore.commit();
         updatedPerPatchStore.commit();
         truePatchStore.commit();
     }
@@ -36,9 +36,12 @@ public class BdbDataSource {
     private void create() {
         try {
             final TupleBinding<String> stringBinding = TupleBinding.getPrimitiveBinding(String.class);
+            final TupleBinding<Integer> integerBinding = TupleBinding.getPrimitiveBinding(Integer.class);
 
-            StringStringIsCleanHandler stringStringIsCleanHandler = new StringStringIsCleanHandler();
-            tripleStore = new BdbTripleStore(dataStoreFactory.getDatabase(
+            final StringStringIsCleanHandler stringStringIsCleanHandler = new StringStringIsCleanHandler();
+            final StringIntegerIsCleanHandler stringIntegerIsCleanHandler = new StringIntegerIsCleanHandler();
+
+            quadStore = new BdbQuadStore(dataStoreFactory.getDatabase(
                     userId,
                     dataSetId,
                     "rdfData",
@@ -48,28 +51,19 @@ public class BdbDataSource {
                     stringStringIsCleanHandler
             ));
 
-            final TupleBinding<Integer> integerBinding = TupleBinding.getPrimitiveBinding(Integer.class);
+
             updatedPerPatchStore = new UpdatedPerPatchStore(
                     dataStoreFactory.getDatabase(
                             userId,
                             dataSetId,
                             "updatedPerPatch",
                             true,
-                            integerBinding,
                             stringBinding,
-                            new IsCleanHandler<Integer, String>() {
-                                @Override
-                                public Integer getKey() {
-                                    return Integer.MAX_VALUE;
-                                }
-
-                                @Override
-                                public String getValue() {
-                                    return "isClean";
-                                }
-                            }
+                            integerBinding,
+                            stringIntegerIsCleanHandler
                     )
             );
+
             truePatchStore = new BdbTruePatchStore(version ->
                     dataStoreFactory.getDatabase(
                             userId,

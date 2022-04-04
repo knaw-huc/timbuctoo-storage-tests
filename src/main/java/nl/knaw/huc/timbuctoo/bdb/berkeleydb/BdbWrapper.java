@@ -27,7 +27,11 @@ import java.util.stream.Stream;
 
 import static com.sleepycat.je.OperationStatus.SUCCESS;
 
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class BdbWrapper<KeyT, ValueT> {
+  private static final Logger LOG = getLogger(BdbWrapper.class);
   private final Environment dbEnvironment;
   private final Database database;
   private final DatabaseConfig databaseConfig;
@@ -75,7 +79,7 @@ public class BdbWrapper<KeyT, ValueT> {
     }
     for (Map.Entry<Cursor, String> cursor : cursors.entrySet()) {
       cursor.getKey().close();
-      //LOG.error("Cursor was not closed. It was opened at: \n" + cursor.getValue());
+      LOG.error("Cursor was not closed. It was opened at: \n" + cursor.getValue());
     }
 
     database.close();
@@ -86,26 +90,24 @@ public class BdbWrapper<KeyT, ValueT> {
       keyBinder,
       valueBinder,
       database,
-      cursors,
-      isCleanHandler.getKey(),
-      isCleanHandler.getValue());
+      cursors
+    );
   }
 
   public boolean isClean() {
     try (Stream<KeyT> keys = databaseGetter().getAll().getKeys(new NonFilteringKeyRetriever<>())) {
-      if (!keys.findAny().isPresent()) { // database is empty so it is clean
+      if (keys.findAny().isEmpty()) { // database is empty so it is clean
         return true;
       }
     }
 
     try (Stream<ValueT> values = databaseGetter().key(isCleanHandler.getKey()).dontSkip().forwards().getValues(
-      new NonFilteringValueRetriever<>())) {
+        new NonFilteringValueRetriever<>())) {
       Optional<ValueT> first = values.findFirst();
       if (first.isPresent()) {
         ValueT value = first.get();
         return Objects.equals(value, isCleanHandler.getValue());
       }
-
     }
     return false;
   }
@@ -255,7 +257,7 @@ public class BdbWrapper<KeyT, ValueT> {
     ValueT get(Tuple<?, ValueT> keyValue);
   }
 
-  private class NonFilteringKeyRetriever<FKeyT> implements KeyRetriever<FKeyT> {
+  private static class NonFilteringKeyRetriever<FKeyT> implements KeyRetriever<FKeyT> {
     @Override
     public boolean filter(Tuple<FKeyT, ?> keyValue) {
       return true;
@@ -312,7 +314,7 @@ public class BdbWrapper<KeyT, ValueT> {
     }
   }
 
-  private class NonFilteringValueRetriever<FValueT> implements ValueRetriever<FValueT> {
+  private static class NonFilteringValueRetriever<FValueT> implements ValueRetriever<FValueT> {
     @Override
     public boolean filter(Tuple<?, FValueT> keyValue) {
       return true;

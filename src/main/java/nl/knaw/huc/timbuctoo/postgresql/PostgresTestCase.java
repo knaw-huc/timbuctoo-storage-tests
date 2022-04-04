@@ -26,13 +26,14 @@ public class PostgresTestCase extends TestCase {
     private final PostgresRdfHandler rdfHandler;
     private final String tableName;
 
-    public PostgresTestCase(String url, String userId, String name, String baseUri, int version) throws Exception {
+    public PostgresTestCase(String url, String userId, String name, String baseUri, String defaultGraph,
+                            String fileName, int version) throws Exception {
         this.url = url;
         this.baseUri = baseUri;
         this.version = version;
 
         jdbi = Jdbi.create("jdbc:postgresql://localhost/timbuctoo");
-        rdfHandler = new PostgresRdfHandler(userId, name, baseUri, jdbi, version);
+        rdfHandler = new PostgresRdfHandler(userId, name, baseUri, defaultGraph, fileName, jdbi, version);
         tableName = DigestUtils.md5Hex(String.format("%s_%s", userId, name));
 
         runTests();
@@ -90,6 +91,7 @@ public class PostgresTestCase extends TestCase {
                 rs.getString("object"),
                 rs.getString("type"),
                 rs.getString("language"),
+                rs.getString("graph"),
                 ""
         );
     }
