@@ -1,6 +1,6 @@
 package nl.knaw.huc.timbuctoo.bdb.datastores.implementations.bdb;
 
-import nl.knaw.huc.timbuctoo.bdb.datastores.updatedperpatchstore.SubjectCursor;
+import nl.knaw.huc.timbuctoo.util.SubjectCursor;
 import nl.knaw.huc.timbuctoo.util.DataStoreCreationException;
 import nl.knaw.huc.timbuctoo.util.Streams;
 import nl.knaw.huc.timbuctoo.util.Tuple;

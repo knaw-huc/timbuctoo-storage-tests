@@ -25,6 +25,10 @@ public class BdbRdfHandler extends RDFHandler {
         bdbDataSource.quadStore.isClean();
     }
 
+    public void commit() {
+        bdbDataSource.commit();
+    }
+
     protected void putQuad(String subject, String predicate, Direction direction, String object, String valueType,
                            String language, String graph) throws Exception {
         try {

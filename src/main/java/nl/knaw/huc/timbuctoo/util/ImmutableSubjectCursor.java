@@ -1,11 +1,10 @@
-package nl.knaw.huc.timbuctoo.bdb.datastores.updatedperpatchstore;
+package nl.knaw.huc.timbuctoo.util;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.primitives.Ints;
 //import com.google.errorprone.annotations.CanIgnoreReturnValue;
 //import com.google.errorprone.annotations.Var;
-import nl.knaw.huc.timbuctoo.bdb.datastores.CursorValue;
 //import org.immutables.value.Generated;
 
 //import javax.annotation.CheckReturnValue;

@@ -31,7 +31,7 @@ public class BdbPersistentEnvironmentCreator implements BdbEnvironmentCreator {
   private static final Logger LOG = LoggerFactory.getLogger(BdbPersistentEnvironmentCreator.class);
   protected final EnvironmentConfig configuration;
   private final String databaseLocation;
-  private final BdbBackupper bdbBackupper;
+  //private final BdbBackupper bdbBackupper;
   private final Map<String, Environment> environmentMap = new HashMap<>();
   private final Map<String, Database> databases = new HashMap<>();
   private FileHelper fileHelper;
@@ -44,7 +44,7 @@ public class BdbPersistentEnvironmentCreator implements BdbEnvironmentCreator {
     configuration.setDurability(Durability.COMMIT_NO_SYNC);
     configuration.setAllowCreate(true);
     configuration.setSharedCache(true);
-    bdbBackupper = new BdbBackupper();
+    //bdbBackupper = new BdbBackupper();
   }
 
   @Override
@@ -107,14 +107,14 @@ public class BdbPersistentEnvironmentCreator implements BdbEnvironmentCreator {
 
   @Override
   public void backUpDatabases(String backupPath, String ownerId, String dataSetId) throws IOException {
-    final Environment environment = environmentMap.get(environmentKey(ownerId, dataSetId));
-    // make sure all data synced to disc
-
-    bdbBackupper.backupDatabase(
-        environment,
-        databasesPath(ownerId, dataSetId).toPath(),
-        databaseBackupPath(backupPath, ownerId, dataSetId)
-    );
+//    final Environment environment = environmentMap.get(environmentKey(ownerId, dataSetId));
+//    // make sure all data synced to disc
+//
+//    bdbBackupper.backupDatabase(
+//        environment,
+//        databasesPath(ownerId, dataSetId).toPath(),
+//        databaseBackupPath(backupPath, ownerId, dataSetId)
+//    );
   }
 
   public void closeEnvironment(String ownerId, String dataSetId) {

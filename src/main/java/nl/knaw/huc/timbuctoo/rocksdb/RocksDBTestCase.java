@@ -1,4 +1,4 @@
-package nl.knaw.huc.timbuctoo.bdb;
+package nl.knaw.huc.timbuctoo.rocksdb;
 
 import nl.knaw.huc.timbuctoo.TestCase;
 import nl.knaw.huc.timbuctoo.tests.Test;
@@ -7,21 +7,20 @@ import nl.knaw.huc.timbuctoo.util.Direction;
 import java.io.File;
 import java.net.URL;
 
-public class BdbTestCase extends TestCase {
+public class RocksDBTestCase extends TestCase {
     private final Test test;
-    private final BdbRdfHandler rdfHandler;
+    private final RocksDBRdfHandler rdfHandler;
 
-    public BdbTestCase(Test test) throws Exception {
+    public RocksDBTestCase(Test test) throws Exception {
         this.test = test;
-        rdfHandler = new BdbRdfHandler("12345", test.getName(), test.getBaseUri(), null,
-                test.getName(), new File("./data/bdb").getCanonicalPath(), 0);
+        rdfHandler = new RocksDBRdfHandler(test.getBaseUri(), test.getName(), new File("./data/rocksdb").getCanonicalPath(), 0);
 
         runTests();
     }
 
     @Override
     public String getName() {
-        return "Berkeley DB";
+        return "RocksDB";
     }
 
     private void runTests() throws Exception {
@@ -31,31 +30,31 @@ public class BdbTestCase extends TestCase {
 
     private long importAll() throws Exception {
         importRdf(new URL(test.getUrl()).openStream(), test.getBaseUri(), rdfHandler);
-        rdfHandler.bdbDataSource.commit();
         return 0;
     }
 
     private long getLatest() {
-        return rdfHandler.bdbDataSource.quadStore.getAllQuads().count();
+        return rdfHandler.dataSource.quadStore.getAllQuads().count();
     }
 
     private long getAllFromType() {
-        return rdfHandler.bdbDataSource.quadStore.getQuads(test.getTestRdfType(), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", Direction.IN, "").count();
+        return rdfHandler.dataSource.quadStore.getQuads(test.getTestRdfType(),
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", Direction.IN).count();
     }
 
     private long getAllAboutSubject() {
-        return rdfHandler.bdbDataSource.quadStore.getQuads(test.getTestSubjectUri()).count();
+        return rdfHandler.dataSource.quadStore.getQuads(test.getTestSubjectUri()).count();
     }
 
     private long getSubjectsOfVersion() {
-        return rdfHandler.bdbDataSource.updatedPerPatchStore.ofVersion(0).count();
+        return rdfHandler.dataSource.updatedPerPatchStore.ofVersion(0).count();
     }
 
     private long getAddedChangesOfVersion() {
-        return rdfHandler.bdbDataSource.truePatchStore.getChangesOfVersion(0, true).count();
+        return rdfHandler.dataSource.truePatchStore.getChangesOfVersion(0, true).count();
     }
 
     private long getDeletedChangesOfVersion() {
-        return rdfHandler.bdbDataSource.truePatchStore.getChangesOfVersion(0, false).count();
+        return rdfHandler.dataSource.truePatchStore.getChangesOfVersion(0, false).count();
     }
 }

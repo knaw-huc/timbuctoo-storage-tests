@@ -1,4 +1,4 @@
-package nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.dto;
+package nl.knaw.huc.timbuctoo.util;
 
 public enum ChangeType {
   ASSERTED,

@@ -1,22 +1,33 @@
 package nl.knaw.huc.timbuctoo;
 
 import nl.knaw.huc.timbuctoo.bdb.BdbTestCase;
+import nl.knaw.huc.timbuctoo.cockroach.CockroachTestCase;
+import nl.knaw.huc.timbuctoo.duckdb.DuckDBTestCase;
 import nl.knaw.huc.timbuctoo.postgresql.PostgresTestCase;
+import nl.knaw.huc.timbuctoo.rdf4j_lmdb.Rdf4JLmdbTestCase;
+import nl.knaw.huc.timbuctoo.rocksdb.RocksDBTestCase;
+import nl.knaw.huc.timbuctoo.tests.EcarticoTest;
+import nl.knaw.huc.timbuctoo.tests.Test;
+
+import java.util.List;
 
 public class Main {
-    private static final String USER_ID = "12345";
-    private static final int VERSION = 0;
-
-    private static final String ECARTICO_URL = "https://repository.goldenagents.org/v5/resourcesync/ufab7d657a250e3461361c982ce9b38f3816e0c4b/ecartico_20190805/dataset.nq";
-    private static final String ECARTICO_BASE_URI = "https://data.goldenagents.org/datasets/ufab7d657a250e3461361c982ce9b38f3816e0c4b/ecartico_20190805/";
-    private static final String ECARTICO_GRAPH_URI = "https://data.goldenagents.org/datasets/ufab7d657a250e3461361c982ce9b38f3816e0c4b/ecartico_20190805";
-    private static final String ECARTICO_NAME = "ecartico_20190805";
-
     public static void main(String[] args) throws Exception {
-        BdbTestCase bdbTestCase = new BdbTestCase(ECARTICO_URL, USER_ID, ECARTICO_NAME, ECARTICO_BASE_URI, ECARTICO_GRAPH_URI, ECARTICO_NAME, VERSION);
-        PostgresTestCase postgresTestCase = new PostgresTestCase(ECARTICO_URL, USER_ID, ECARTICO_NAME, ECARTICO_BASE_URI, ECARTICO_GRAPH_URI, ECARTICO_NAME, VERSION);
+        withTest(new EcarticoTest());
+    }
 
-        bdbTestCase.printReport();
-        postgresTestCase.printReport();
+    private static void withTest(Test test) throws Exception {
+        List<TestCase> testCases = List.of(
+                new BdbTestCase(test),
+                new PostgresTestCase(test),
+                new CockroachTestCase(test),
+                new DuckDBTestCase(test),
+                new RocksDBTestCase(test),
+                new Rdf4JLmdbTestCase(test)
+        );
+
+        TestReport report = new TestReport(testCases);
+        System.out.println(report.getReports());
+        System.out.println(report.getFullReport());
     }
 }

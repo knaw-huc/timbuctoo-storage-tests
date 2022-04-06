@@ -4,8 +4,7 @@ import nl.knaw.huc.timbuctoo.bdb.berkeleydb.BdbWrapper;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.DatabaseGetter;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.exceptions.DatabaseWriteException;
 import nl.knaw.huc.timbuctoo.util.DataStoreCreationException;
-import nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.QuadStore;
-import nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.dto.CursorQuad;
+import nl.knaw.huc.timbuctoo.util.CursorQuad;
 import nl.knaw.huc.timbuctoo.util.Direction;
 import nl.knaw.huc.timbuctoo.util.Graph;
 
@@ -18,7 +17,7 @@ import static nl.knaw.huc.timbuctoo.bdb.berkeleydb.DatabaseGetter.Iterate.FORWAR
 /**
  * This datastore determines the current state of the DataSet.
  */
-public class BdbQuadStore implements QuadStore {
+public class BdbQuadStore {
   private final BdbWrapper<String, String> bdbWrapper;
 
   public BdbQuadStore(BdbWrapper<String, String> rdfData)
@@ -26,17 +25,14 @@ public class BdbQuadStore implements QuadStore {
     this.bdbWrapper = rdfData;
   }
 
-  @Override
   public Stream<CursorQuad> getQuads(String subject) {
     return getQuadsInGraph(subject, Optional.empty());
   }
 
-  @Override
   public Stream<CursorQuad> getQuads(String subject, String predicate, Direction direction, String cursor) {
     return getQuadsInGraph(subject, predicate, direction, cursor, Optional.empty());
   }
 
-  @Override
   public Stream<CursorQuad> getQuadsInGraph(String subject, Optional<Graph> graph) {
     return bdbWrapper.databaseGetter()
                      .partialKey(subject + "\n", (prefix, key) -> key.startsWith(prefix))
@@ -46,7 +42,6 @@ public class BdbQuadStore implements QuadStore {
                      .filter(quad -> quad.inGraph(graph));
   }
 
-  @Override
   public Stream<CursorQuad> getQuadsInGraph(String subject, String predicate,
                                             Direction direction, String cursor, Optional<Graph> graph) {
     final DatabaseGetter<String, String> getter;
@@ -75,12 +70,10 @@ public class BdbQuadStore implements QuadStore {
                  .filter(quad -> quad.inGraph(graph));
   }
 
-  @Override
   public Stream<CursorQuad> getAllQuads() {
     return getAllQuadsInGraph(Optional.empty());
   }
 
-  @Override
   public Stream<CursorQuad> getAllQuadsInGraph(Optional<Graph> graph) {
     return bdbWrapper.databaseGetter()
                      .getAll()
@@ -88,7 +81,6 @@ public class BdbQuadStore implements QuadStore {
                      .filter(quad -> quad.inGraph(graph));
   }
 
-  @Override
   public void close() {
     try {
       bdbWrapper.close();
@@ -144,12 +136,10 @@ public class BdbQuadStore implements QuadStore {
     return leftStr.compareTo(rightStr);
   }
 
-  @Override
   public void commit() {
     bdbWrapper.commit();
   }
 
-  @Override
   public boolean isClean() {
     return bdbWrapper.isClean();
   }

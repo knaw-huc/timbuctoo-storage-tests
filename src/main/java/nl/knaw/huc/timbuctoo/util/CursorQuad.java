@@ -1,10 +1,6 @@
-package nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.dto;
+package nl.knaw.huc.timbuctoo.util;
 
 //import org.immutables.value.Value;
-
-import nl.knaw.huc.timbuctoo.bdb.datastores.CursorValue;
-import nl.knaw.huc.timbuctoo.util.Direction;
-import nl.knaw.huc.timbuctoo.util.Graph;
 
 import java.util.Optional;
 

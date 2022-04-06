@@ -1,6 +1,4 @@
-package nl.knaw.huc.timbuctoo.bdb.datastores.updatedperpatchstore;
-
-import nl.knaw.huc.timbuctoo.bdb.datastores.CursorValue;
+package nl.knaw.huc.timbuctoo.util;
 
 import java.util.Set;
 

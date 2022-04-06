@@ -25,10 +25,6 @@ public abstract class RDFHandler extends AbstractRDFHandler {
         this.fileName = fileName;
     }
 
-    public void registerActionSupplier(Supplier<Integer> actionSupplier) {
-        this.actionSupplier = actionSupplier;
-    }
-
     @Override
     public void handleStatement(Statement st) throws RDFHandlerException {
         try {
@@ -56,7 +52,8 @@ public abstract class RDFHandler extends AbstractRDFHandler {
             String nodeName = resource.toString();
             String nodeId = nodeName.substring(nodeName.indexOf(":") + 1);
             return baseUri + ".well-known/genid/" + DigestUtils.md5Hex(fileName) + "_" + nodeId;
-        } else {
+        }
+        else {
             return resource.stringValue();
         }
     }
@@ -66,20 +63,25 @@ public abstract class RDFHandler extends AbstractRDFHandler {
         if (isAssertion) {
             if (dataType == null || dataType.isEmpty()) {
                 this.addRelation(subject, predicate, object, graph);
-            } else {
+            }
+            else {
                 if (language != null && !language.isEmpty() && dataType.equals(LANGSTRING)) {
                     this.addLanguageTaggedString(subject, predicate, object, language, graph);
-                } else {
+                }
+                else {
                     this.addValue(subject, predicate, object, dataType, graph);
                 }
             }
-        } else {
+        }
+        else {
             if (dataType == null || dataType.isEmpty()) {
                 this.delRelation(subject, predicate, object, graph);
-            } else {
+            }
+            else {
                 if (language != null && !language.isEmpty() && dataType.equals(LANGSTRING)) {
                     this.delLanguageTaggedString(subject, predicate, object, language, graph);
-                } else {
+                }
+                else {
                     this.delValue(subject, predicate, object, dataType, graph);
                 }
             }
@@ -122,4 +124,6 @@ public abstract class RDFHandler extends AbstractRDFHandler {
 
     protected abstract void deleteQuad(String subject, String predicate, Direction direction, String object, String valueType,
                                        String language, String graph) throws Exception;
+
+    public abstract void commit() throws Exception;
 }

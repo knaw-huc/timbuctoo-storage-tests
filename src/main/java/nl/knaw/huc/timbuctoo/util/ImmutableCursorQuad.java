@@ -1,4 +1,4 @@
-package nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.dto;
+package nl.knaw.huc.timbuctoo.util;
 
 import com.google.common.base.MoreObjects;
 //import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -12,8 +12,7 @@ import java.util.Optional;
 //import javax.annotation.ParametersAreNonnullByDefault;
 //import javax.annotation.concurrent.Immutable;
 //import javax.annotation.concurrent.NotThreadSafe;
-import nl.knaw.huc.timbuctoo.bdb.datastores.CursorValue;
-import nl.knaw.huc.timbuctoo.util.Direction;
+
 //import org.immutables.value.Generated;
 
 /**

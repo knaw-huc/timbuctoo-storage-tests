@@ -6,8 +6,8 @@ import nl.knaw.huc.timbuctoo.util.Tuple;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.BdbWrapper;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.exceptions.BdbDbCreationException;
 import nl.knaw.huc.timbuctoo.bdb.berkeleydb.exceptions.DatabaseWriteException;
-import nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.dto.ChangeType;
-import nl.knaw.huc.timbuctoo.bdb.datastores.quadstore.dto.CursorQuad;
+import nl.knaw.huc.timbuctoo.util.ChangeType;
+import nl.knaw.huc.timbuctoo.util.CursorQuad;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
