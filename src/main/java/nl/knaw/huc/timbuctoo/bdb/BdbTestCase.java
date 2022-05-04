@@ -30,7 +30,7 @@ public class BdbTestCase extends TestCase {
     }
 
     private long importAll() throws Exception {
-        importRdf(new URL(test.getUrl()).openStream(), test.getBaseUri(), rdfHandler);
+        importRdf(test.getInputStream(), test.getBaseUri(), rdfHandler);
         rdfHandler.bdbDataSource.commit();
         return 0;
     }

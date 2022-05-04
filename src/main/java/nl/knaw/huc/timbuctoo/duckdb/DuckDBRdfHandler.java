@@ -11,17 +11,19 @@ import org.jdbi.v3.core.Jdbi;
 import java.sql.SQLException;
 
 public class DuckDBRdfHandler extends RDFHandler {
-    private static final String CREATE_TABLE = "CREATE TABLE \"%s\" (\n" +
-            "        subject VARCHAR(2048) NOT NULL,\n" +
-            "        predicate VARCHAR(2048) NOT NULL,\n" +
-            "        graph VARCHAR(2048) NOT NULL,\n" +
-            "        language VARCHAR(3),\n" +
-            "        type VARCHAR(2048),\n" +
-            "        is_out BOOLEAN NOT NULL,\n" +
-            "        version INTEGER NOT NULL,\n" +
-            "        is_insert BOOLEAN NOT NULL,\n" +
-            "        object TEXT NOT NULL\n" +
-            ")\n";
+    private static final String CREATE_TABLE = """
+            CREATE TABLE "%s" (
+                    subject VARCHAR(2048) NOT NULL,
+                    predicate VARCHAR(2048) NOT NULL,
+                    graph VARCHAR(2048) NOT NULL,
+                    language VARCHAR(3),
+                    type VARCHAR(2048),
+                    is_out BOOLEAN NOT NULL,
+                    version INTEGER NOT NULL,
+                    is_insert BOOLEAN NOT NULL,
+                    object TEXT NOT NULL
+            )
+            """;
 
     private final int version;
     private final String tableName;

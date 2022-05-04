@@ -1,6 +1,6 @@
 package nl.knaw.huc.timbuctoo.tests;
 
-public class EcarticoTest implements Test {
+public class EcarticoTest extends Test {
     @Override
     public String getName() {
         return "ecartico_20200316";
