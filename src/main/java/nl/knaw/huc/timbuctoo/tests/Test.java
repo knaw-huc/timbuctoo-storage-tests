@@ -28,11 +28,14 @@ public abstract class Test {
     public void downloadDataset() throws IOException {
         File file = new File("./data/dataset");
         file.getParentFile().mkdirs();
-        file.createNewFile();
 
-        try (InputStream inputStream = new URL(getUrl()).openStream();
-             OutputStream outputStream = new GZIPOutputStream(new FileOutputStream(file))) {
-            inputStream.transferTo(outputStream);
+        if (!file.exists()) {
+            file.createNewFile();
+
+            try (InputStream inputStream = new URL(getUrl()).openStream();
+                 OutputStream outputStream = new GZIPOutputStream(new FileOutputStream(file))) {
+                inputStream.transferTo(outputStream);
+            }
         }
     }
 }
